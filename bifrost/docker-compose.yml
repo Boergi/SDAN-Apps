@@ -1,0 +1,34 @@
+networks:
+  app_net:
+    driver: bridge
+
+  proxy_net:
+    external: true
+    name: ${PROXY_NETWORK:-proxy_net}
+
+volumes:
+  bifrost_data:
+
+services:
+  web:
+    image: maximhq/bifrost:${TAG:-latest}
+    container_name: bifrost
+    restart: unless-stopped
+    networks:
+      app_net:
+      proxy_net:
+        aliases:
+          - bifrost
+    environment:
+      - APP_PORT=8080
+      - APP_HOST=0.0.0.0
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_STYLE=${LOG_STYLE:-json}
+    volumes:
+      - "${BIFROST_DATA:-bifrost_data}:/app/data"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
