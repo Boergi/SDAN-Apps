@@ -1,0 +1,60 @@
+# Template für eine SDAN-konforme docker-compose.yml
+#
+# Platzhalter (vor dem Einsatz ersetzen):
+#   <APP_NAME>   – Verzeichnis-/App-Name, z. B. myapp
+#   <APP_VOLUME> – Name des Daten-Volumes, z. B. myapp_data
+#   <IMAGE>      – Docker-Image, z. B. myapp/myapp:latest
+#   <APP_PORT>   – Interner Port des Web-Containers, z. B. 8080
+#
+# Optionale Bereiche (bei Bedarf aktivieren):
+#   – db-Service für Datenbank-abhängige Apps
+#   – Weitere Backend-Services (Cache, Worker, …) – immer nur in app_net!
+
+networks:
+  app_net:
+    driver: bridge
+
+  proxy_net:
+    external: true
+    name: ${PROXY_NETWORK:-proxy_net}
+
+volumes:
+  <APP_VOLUME>:
+  # Bei Datenbank-Betrieb zusätzlich:
+  # pgdata:
+
+services:
+  web:
+    image: <IMAGE>
+    restart: unless-stopped
+    networks:
+      app_net:
+      proxy_net:
+        aliases:
+          - <APP_NAME>
+    environment:
+      APP_HOST: "${APP_HOST:-<APP_NAME>.deinedomain.de}"
+      # … weitere app-spezifische Variablen
+    volumes:
+      - <APP_VOLUME>:/data
+    # Bei Datenbank-Betrieb aktivieren:
+    # depends_on:
+    #   - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:<APP_PORT>/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+  # Optionaler Datenbank-Service – niemals proxy_net!
+  # db:
+  #   image: postgres:${POSTGRES_VERSION:-17}
+  #   restart: unless-stopped
+  #   networks:
+  #     - app_net
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-p4ssw0rd}
+  #     POSTGRES_DB: <APP_NAME>

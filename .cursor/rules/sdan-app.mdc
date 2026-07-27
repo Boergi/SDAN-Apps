@@ -1,0 +1,40 @@
+---
+description: Neue App zum SDAN-Apps-Repository hinzufügen (docker-compose.yml, .env.example, generate-env.sh, README.md nach SDAN-Konventionen) oder bestehende Apps auf Konformität prüfen. Verwenden, wenn der Nutzer eine App für das Secure Docker App Network erstellen, integrieren, reviewen oder aktualisieren möchte.
+globs: ["**/docker-compose.yml", "**/.env.example", "**/generate-env.sh", "**/README.md"]
+alwaysApply: false
+---
+
+# SDAN-App – Skill für das Secure Docker App Network
+
+Die vollständige Skill-Dokumentation liegt unter:
+`skills/sdan-app/SKILL.md`
+
+## Wann anwenden
+
+- Wenn eine neue App für das SDAN-Repository erstellt werden soll
+- Wenn eine bestehende App auf SDAN-Konformität geprüft werden soll
+- Wenn eine App aktualisiert oder refactort wird
+
+## Kernkonventionen
+
+- **Kein `ports:` am Web-Container** – der Gateway greift über das interne `proxy_net` zu
+- **`proxy_net`** als `external: true` deklarieren, Name via `${PROXY_NETWORK:-proxy_net}`
+- **Nur der Web-Container** tritt `proxy_net` bei – Backend-Services bleiben auf `app_net`
+- **Upstream-Alias** im `proxy_net` definieren (`aliases: [<appname>]`)
+- **Restart-Policy** `unless-stopped`
+- **Healthcheck** am Web-Container empfohlen
+- **Secrets** nie als echte Werte in Compose-Defaults – `OVERWRITE_ME` verwenden
+
+## Workflow-Übersicht
+
+1. Rahmendaten klären (App-Name, Alias, Port, Backend-Services)
+2. Dateien aus Templates erzeugen (`skills/sdan-app/templates/`)
+3. Pflichtregeln für `docker-compose.yml` prüfen
+4. `.env.example` und `generate-env.sh` erstellen
+5. App-`README.md` schreiben
+6. Root-`README.md` aktualisieren
+7. Validierung mit `docker compose config -q`
+8. `gatectl`-Befehle für die Registrierung ausgeben
+
+Detaillierte Checkliste: `skills/sdan-app/reference/checklist.md`
+gatectl-Referenz: `skills/sdan-app/reference/gatectl.md`
