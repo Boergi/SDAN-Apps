@@ -10,6 +10,7 @@ einheitlichen Muster, das die Integration mit dem SDAN-Gateway vereinfacht.
 | App | Beschreibung | Verzeichnis | Upstream-Alias |
 |-----|-------------|-------------|----------------|
 | [OpenProject](https://www.openproject.org/) | Projektmanagement-Software | `openproject/` | `openproject` |
+| [Leantime](https://leantime.io/) | Projektmanagement- und Ideenmanagement-Software | `leantime/` | `leantime` |
 
 ## Voraussetzungen
 
