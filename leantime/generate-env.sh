@@ -73,6 +73,10 @@ LANGUAGE="${LANGUAGE:-en-US}"
 read -rp "Zeitzone (Default: Europe/Berlin): " TIMEZONE
 TIMEZONE="${TIMEZONE:-Europe/Berlin}"
 
+# --- 5b. Trusted-Proxies abfragen -------------------------------------------
+read -rp "Trusted-Proxies CIDR (Default: 172.16.0.0/12): " TRUSTED_PROXIES
+TRUSTED_PROXIES="${TRUSTED_PROXIES:-172.16.0.0/12}"
+
 # --- 6. Datenbank-Passwörter ------------------------------------------------
 echo ""
 echo "=== Datenbank ==="
@@ -165,6 +169,12 @@ MYSQL_ROOT_PASSWORD=${ROOT_PASS}
 
 # Session
 LEAN_SESSION_PASSWORD=${SESSION_PASS}
+
+# HTTPS / Reverse-Proxy
+LEAN_APP_URL=https://${HOSTNAME}
+LEAN_SESSION_SECURE=true
+LEAN_HSTS_ENABLED=true
+LEAN_TRUSTED_PROXIES=${TRUSTED_PROXIES}
 
 # App-Konfiguration
 LEAN_SITENAME=${SITENAME}

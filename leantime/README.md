@@ -1,4 +1,4 @@
-# Leantime hinter dem secure-docker-app-Network-Gateway
+ # Leantime hinter dem secure-docker-app-Network-Gateway
 
 Dieses Verzeichnis enthält die Docker-Compose-Konfiguration für
 [Leantime](https://leantime.io/) (Projektmanagement- und
@@ -126,7 +126,15 @@ erreichbar ist (z. B. `leantime.deinedomain.de`).
 ### HTTPS
 
 Die TLS-Terminierung erfolgt am secure-docker-app-Network-Gateway.
-Leantime selbst läuft hinter dem Gateway auf HTTP.
+Leantime selbst läuft hinter dem Gateway auf HTTP. Damit Leantime korrekte
+HTTPS-Links generiert und keine Mixed-Content-Fehler auftreten, sind
+folgende Umgebungsvariablen gesetzt:
+
+- `LEAN_APP_URL` – externe URL mit `https://` (z. B. `https://leantime.deinedomain.de`)
+- `LEAN_SESSION_SECURE=true` – Cookies als `Secure` markieren
+- `LEAN_HSTS_ENABLED=true` – HSTS-Header aktivieren
+- `LEAN_TRUSTED_PROXIES` – CIDR des Gateway-Netzwerks (Default: `172.16.0.0/12`),
+  damit Leantime den `X-Forwarded-Proto`-Header des Gateways vertraut
 
 ### Session-Password
 

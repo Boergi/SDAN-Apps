@@ -48,7 +48,7 @@ services:
         aliases:
           - leantime
     environment:
-      LEAN_APP_URL: "${LEAN_APP_URL:-}"
+      LEAN_APP_URL: "${LEAN_APP_URL:-https://leantime.deinedomain.de}"
       LEAN_APP_DIR: "${LEAN_APP_DIR:-}"
       LEAN_DEBUG: "${LEAN_DEBUG:-0}"
       LEAN_DB_HOST: "db"
@@ -57,6 +57,9 @@ services:
       LEAN_DB_DATABASE: "${LEAN_DB_DATABASE:-leantime}"
       LEAN_DB_PORT: "3306"
       LEAN_SESSION_PASSWORD: "${LEAN_SESSION_PASSWORD:-OVERWRITE_ME}"
+      LEAN_SESSION_SECURE: "${LEAN_SESSION_SECURE:-true}"
+      LEAN_HSTS_ENABLED: "${LEAN_HSTS_ENABLED:-true}"
+      LEAN_TRUSTED_PROXIES: "${LEAN_TRUSTED_PROXIES:-172.16.0.0/12}"
       LEAN_SITENAME: "${LEAN_SITENAME:-Leantime}"
       LEAN_LANGUAGE: "${LEAN_LANGUAGE:-en-US}"
       LEAN_DEFAULT_TIMEZONE: "${LEAN_DEFAULT_TIMEZONE:-Europe/Berlin}"
