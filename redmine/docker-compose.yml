@@ -1,0 +1,65 @@
+networks:
+  app_net:
+    driver: bridge
+  proxy_net:
+    external: true
+    name: ${PROXY_NETWORK:-proxy_net}
+
+volumes:
+  redmine_files:
+  pgdata:
+
+x-restart-policy: &restart_policy
+  restart: unless-stopped
+
+services:
+  db:
+    image: postgres:${POSTGRES_VERSION:-17}
+    <<: *restart_policy
+    environment:
+      POSTGRES_DB: redmine
+      POSTGRES_USER: redmine
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-p4ssw0rd}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app_net
+
+  redmine:
+    image: redmine:${TAG:-7.0.0-alpine3.24}
+    <<: *restart_policy
+    environment:
+      REDMINE_DB_POSTGRES: db
+      REDMINE_DB_PORT: 5432
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: ${POSTGRES_PASSWORD:-p4ssw0rd}
+      REDMINE_DB_DATABASE: redmine
+      REDMINE_SECRET_KEY_BASE: ${REDMINE_SECRET_KEY_BASE:-OVERWRITE_ME}
+      REDMINE_RELATIVE_URL_ROOT: ${REDMINE_RELATIVE_URL_ROOT:-}
+    volumes:
+      - redmine_files:/usr/src/redmine/files
+    depends_on:
+      - db
+    networks:
+      app_net:
+      proxy_net:
+        aliases:
+          - redmine
+    labels:
+      - autoheal=true
+    healthcheck:
+      test: ["CMD", "ruby", "-rnet/http", "-ruri", "-e", "exit(Net::HTTP.get_response(URI('http://127.0.0.1:3000/login')).is_a?(Net::HTTPSuccess) ? 0 : 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  autoheal:
+    image: willfarrell/autoheal:1.2.0
+    <<: *restart_policy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      AUTOHEAL_CONTAINER_LABEL: autoheal
+      AUTOHEAL_START_PERIOD: 600
+      AUTOHEAL_INTERVAL: 30
