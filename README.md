@@ -12,6 +12,7 @@ einheitlichen Muster, das die Integration mit dem SDAN-Gateway vereinfacht.
 | [OpenProject](https://www.openproject.org/) | Projektmanagement-Software | `openproject/` | `openproject` |
 | [Leantime](https://leantime.io/) | Projektmanagement- und Ideenmanagement-Software | `leantime/` | `leantime` |
 | [Redmine 7](https://www.redmine.org/) | Projektmanagement- und Issue-Tracking-Software | `redmine/` | `redmine` |
+| [Taiga](https://www.taiga.io/) | Agile Projektmanagement- und Kollaborationssoftware | `taiga/` | `taiga` |
 
 ## Voraussetzungen
 
